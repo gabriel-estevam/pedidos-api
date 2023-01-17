@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder())
                 .withUser("gabriel")
                 .password(passwordEncoder().encode("123"))
-                .roles("USER");
+                .roles("USER", "ADMIN");
     }
 
     @Override
@@ -35,9 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // .antMatchers("/api/clientes/**").hasRole("USER")//aqui nesse metodo definimos
                 // qual url vai poder acesssar e quais a roles do usuario
                 // .permitAll() //esse metodo permite acesso a url mesmo não estando autenticado
-                .antMatchers("/api/clientes/**").authenticated() // segunda forma de liberar acesso é verificar se o
-                                                                 // usuario esta autenticado, isto é, se ele passou pelo
-                                                                 // metodo acima
+                // .antMatchers("/api/clientes/**").authenticated() // segunda forma de liberar
+                // acesso é verificar se o
+                // usuario esta autenticado, isto é, se ele passou pelo
+                // metodo acima
+                .antMatchers("/api/clientes/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/produtos/**").hasRole("ADMIN")
+                .antMatchers("/api/pedidos/**").hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin(); // cria o formulario de login do spring security ou é possivel passar um caminho
                               // de um formulario de login customizado
