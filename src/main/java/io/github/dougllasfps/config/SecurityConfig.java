@@ -43,8 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/produtos/**").hasRole("ADMIN")
                 .antMatchers("/api/pedidos/**").hasAnyRole("USER", "ADMIN")
                 .and()
-                .formLogin(); // cria o formulario de login do spring security ou é possivel passar um caminho
-                              // de um formulario de login customizado
+                .httpBasic(); // autenticação via header
+        // .formLogin(); // cria o formulario de login do spring security ou é possivel
+        // passar um caminho
+        // de um formulario de login customizado
     }
 
 }
