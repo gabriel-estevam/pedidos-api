@@ -1,5 +1,6 @@
 package io.github.dougllasfps.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,8 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import io.github.dougllasfps.service.impl.UsuarioServiceImpl;
+
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -19,11 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // esse metodo faz a autenticação dos usuários, de onde vamos buscar os usuarios
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder())
-                .withUser("gabriel")
-                .password(passwordEncoder().encode("123"))
-                .roles("USER", "ADMIN");
+        auth.userDetailsService(usuarioService)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Override
