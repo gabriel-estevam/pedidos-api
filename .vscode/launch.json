@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch JwtService",
+            "request": "launch",
+            "mainClass": "io.github.dougllasfps.JwtService",
+            "projectName": "vendas"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-VendasApplication<vendas>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
