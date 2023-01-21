@@ -7,11 +7,11 @@ import java.util.Date;
 //import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+//import org.springframework.boot.SpringApplication;
+//import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
-import io.github.dougllasfps.VendasApplication;
+//import io.github.dougllasfps.VendasApplication;
 import io.github.dougllasfps.domain.entity.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -75,7 +75,7 @@ public class JwtService {
 
     
     //uma maneira de rodar um pedaço da aplicação sem iniciar o spring inteiro
-    public static void main(String[] args) {
+   /*  public static void main(String[] args) {
         ConfigurableApplicationContext contexto = SpringApplication.run(VendasApplication.class);
         JwtService service = contexto.getBean(JwtService.class);
         Usuario usuario = Usuario.builder().login("gabriel").build();
@@ -86,5 +86,5 @@ public class JwtService {
         System.out.println("O token esta valido?" + isTokenValido);
         
         System.out.println(service.obterLoginUsuario(token));
-    }
+    }*/
 }

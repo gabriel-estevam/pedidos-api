@@ -7,13 +7,18 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.github.dougllasfps.domain.entity.Usuario;
 import io.github.dougllasfps.domain.repository.UsuarioRepository;
+import io.github.dougllasfps.exception.SenhaInvalidaException;
 
 @Service
 public class UsuarioServiceImpl implements UserDetailsService {
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Autowired
     private UsuarioRepository repository;
@@ -21,6 +26,15 @@ public class UsuarioServiceImpl implements UserDetailsService {
     @Transactional
     public Usuario salvar(Usuario usuario) {
         return repository.save(usuario);
+    }
+
+    public UserDetails autenticar(Usuario usuario) {
+        UserDetails userCreated = loadUserByUsername(usuario.getLogin());
+        boolean senhasMatch = encoder.matches(usuario.getSenha(), userCreated.getPassword());
+        if(senhasMatch) {
+            return userCreated;
+        }
+        throw new SenhaInvalidaException("Senha invalida!");
     }
 
     @Override
