@@ -7,9 +7,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.github.dougllasfps.security.jwt.JwtAuthFilter;
+import io.github.dougllasfps.security.jwt.JwtService;
 import io.github.dougllasfps.service.impl.UsuarioServiceImpl;
 
 @EnableWebSecurity
@@ -18,11 +23,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public OncePerRequestFilter jwFilter() {
+        return new JwtAuthFilter(jwtService, usuarioService);
+    }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // esse metodo faz a autenticação dos usuários, de onde vamos buscar os usuarios
@@ -35,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Esse metodo para a autorização, isto é, ele pega o usuario autentica e
         // verifica qual a role daquele usuario
         http.csrf().disable() // desativamos essa configuração no ambiente de dev
-                .authorizeRequests()
+                   .authorizeRequests()
                 // .antMatchers("/api/clientes/**").hasRole("USER")//aqui nesse metodo definimos
                 // qual url vai poder acesssar e quais a roles do usuario
                 // .permitAll() //esse metodo permite acesso a url mesmo não estando autenticado
@@ -43,16 +55,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // acesso é verificar se o
                 // usuario esta autenticado, isto é, se ele passou pelo
                 // metodo acima
-                .antMatchers("/api/clientes/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/produtos/**").hasRole("ADMIN")
-                .antMatchers("/api/pedidos/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/usuarios/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic(); // autenticação via header
+                  .antMatchers("/api/clientes/**").hasAnyRole("USER", "ADMIN")
+                  .antMatchers("/api/produtos/**").hasRole("ADMIN")
+                  .antMatchers("/api/pedidos/**").hasAnyRole("USER", "ADMIN")
+                  .antMatchers(HttpMethod.POST, "/api/usuarios/**").permitAll()
+                  .anyRequest().authenticated()
+                  .and() //volta para a raiz do http
+               // .httpBasic(); // autenticação via header
+                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) /*a seção do usuario virou stateless, isto é
+                cada requisição passada tem que ter um token JWT                                                                           
+               */
         // .formLogin(); // cria o formulario de login do spring security ou é possivel
         // passar um caminho
         // de um formulario de login customizado
+               .and()
+               .addFilterBefore(jwFilter(), UsernamePasswordAuthenticationFilter.class); //add o filter jwt criado na seção ANTES do filter padraão do spring security;
     }
 
 }
