@@ -7,7 +7,7 @@
     <groupId>io.github.dougllasfps</groupId>
     <artifactId>vendas</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>${project.packaging}</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -15,7 +15,7 @@
         <version>2.2.4.RELEASE</version>
     </parent>
 
-    <!-- <profiles>
+    <profiles>
         <profile>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -25,7 +25,7 @@
                 <project.packaging>jar</project.packaging>
                 <tomcat.scope>compile</tomcat.scope>
             </properties>
-        </profile>
+        </profile> <!-- Profile padrão -->
 
         <profile>
             <id>producao</id>
@@ -36,7 +36,7 @@
         </profile>
 
     </profiles>
-    -->
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
+            <scope>${tomcat.scope}</scope>
         </dependency>
 
         <dependency>

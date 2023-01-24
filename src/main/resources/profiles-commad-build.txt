@@ -1,0 +1,1 @@
+mvn clean package -P ID_DO_PROFILE_POM
